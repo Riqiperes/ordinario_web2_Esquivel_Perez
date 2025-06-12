@@ -1,4 +1,5 @@
 from django.urls import path, include
+from .views import login_view
 from rest_framework.routers import DefaultRouter
 from .views import UsuarioViewSet, CategoriaViewSet, ProductoViewSet, MovimientoViewSet
 
@@ -10,4 +11,5 @@ router.register(r'movimientos', MovimientoViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('login/', login_view),  # ← nueva ruta
 ]
