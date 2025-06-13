@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import '../styles/Formularios.css';
 import api from "../api/axios";
 
 export default function LoginForm() {
@@ -41,10 +42,10 @@ export default function LoginForm() {
 
 
   return (
-    <div id="div-login">
+    <div className="form-container"> {}
       <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit} id="div-formulario">
-        <div id="div-usuario">
+      <form onSubmit={handleSubmit}>
+        <div className="form-group"> {}
           <label>Usuario:</label>
           <input
             type="text"
@@ -54,7 +55,7 @@ export default function LoginForm() {
           />
         </div>
 
-        <div id="div-contraseña">
+        <div className="form-group"> {}
           <label>Contraseña:</label>
           <input
             type="password"
@@ -64,12 +65,10 @@ export default function LoginForm() {
           />
         </div>
 
-        <div id="div-boton-login">
-          <button type="submit">Entrar</button>
-        </div>
+        <button type="submit" className="form-button">Entrar</button> {}
 
-        {mensaje && <div id="div-mensaje">{mensaje}</div>}
+        {mensaje && <p style={{ textAlign: 'center', marginTop: '1rem' }}>{mensaje}</p>}
       </form>
     </div>
-  );
+);
 }

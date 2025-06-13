@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import '../styles/Formularios.css'
 import api from "../api/axios";
 
 export default function FormularioCategoria() {
@@ -19,12 +20,14 @@ export default function FormularioCategoria() {
     }
   };
 
+  
+
   return (
-    <div id="div-formulario-categoria">
-      <h2>Registrar nueva categoría</h2>
-      <form onSubmit={handleSubmit} id="div-formulario">
-        <div id="div-nombre-categoria">
-          <label>Nombre de categoría:</label>
+    <div className="form-container">
+      <h2>Crear Nueva Categoría</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Nombre de la Categoría:</label>
           <input
             type="text"
             value={nombre}
@@ -32,12 +35,8 @@ export default function FormularioCategoria() {
             required
           />
         </div>
-
-        <div id="div-boton-categoria">
-          <button type="submit">Guardar</button>
-        </div>
-
-        {mensaje && <div id="div-mensaje">{mensaje}</div>}
+        <button type="submit" className="form-button">Guardar Categoría</button>
+        {mensaje && <p style={{ textAlign: 'center', marginTop: '1rem' }}>{mensaje}</p>}
       </form>
     </div>
   );

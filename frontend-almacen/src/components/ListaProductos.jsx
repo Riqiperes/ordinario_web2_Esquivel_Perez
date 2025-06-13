@@ -1,58 +1,72 @@
+
+
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/axios";
 
 export default function ListaProductos() {
   const [productos, setProductos] = useState([]);
-  const [filtro, setFiltro] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
-  useEffect(() => {
+  const cargarProductos = () => {
     api.get("productos/")
       .then(res => setProductos(res.data))
-      .catch(err => console.error("Error al obtener productos:", err));
-  }, []);
+      .catch(err => {
+        console.error("Error al cargar productos:", err);
+        setMensaje("Error al cargar la lista de productos.");
+      });
+  };
 
-  const productosFiltrados = productos.filter(p =>
-    p.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-    p.categoria?.nombre?.toLowerCase().includes(filtro.toLowerCase())
-  );
+  useEffect(() => {
+    cargarProductos();
+  }, []);
+  
+  const handleDelete = async (id) => {
+    
+    if (window.confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+      try {
+        await api.delete(`productos/${id}/`);
+        setMensaje("Producto eliminado correctamente.");
+        
+        cargarProductos();
+      } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+        setMensaje("Error al eliminar el producto.");
+      }
+    }
+  };
 
   return (
-    <div id="div-lista-productos">
-      <h2>Listado de Productos</h2>
-
-      <div id="div-filtro-productos">
-        <input
-          type="text"
-          placeholder="Buscar por nombre o categoría"
-          value={filtro}
-          onChange={(e) => setFiltro(e.target.value)}
-        />
-      </div>
-
-      <div id="div-tabla-productos">
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Categoría</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Disponible</th>
+    <div>
+      <h1>Lista de Productos</h1>
+      {mensaje && <p>{mensaje}</p>}
+      <table className="table-container">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {productos.map(producto => (
+            <tr key={producto.id}>
+              <td>{producto.id}</td>
+              <td>{producto.nombre}</td>
+              <td>{producto.categoria.nombre}</td>
+              <td>${producto.precio}</td>
+              <td>{producto.stock}</td>
+              <td>
+                <Link to={`/productos/editar/${producto.id}`} className="btn-editar">Editar</Link>
+                <button onClick={() => handleDelete(producto.id)} className="btn-eliminar">Eliminar</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {productosFiltrados.map(producto => (
-              <tr key={producto.id}>
-                <td>{producto.nombre}</td>
-                <td>{producto.categoria?.nombre}</td>
-                <td>${producto.precio}</td>
-                <td>{producto.stock}</td>
-                <td>{producto.disponible ? "Sí" : "No"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1,6 +1,8 @@
+
+
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import '../styles/Formularios.css';
 
 export default function FormularioMovimiento({ onMovimientoAgregado }) {
   const [productos, setProductos] = useState([]);
@@ -9,10 +11,17 @@ export default function FormularioMovimiento({ onMovimientoAgregado }) {
   const [cantidad, setCantidad] = useState(1);
   const [comentario, setComentario] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [usuario, setUsuario] = useState(null);
 
-  const navigate = useNavigate();
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  
+  useEffect(() => {
+    const datosUsuario = localStorage.getItem("usuario");
+    if (datosUsuario) {
+      setUsuario(JSON.parse(datosUsuario));
+    }
+  }, []);
 
+  
   useEffect(() => {
     api.get("productos/")
       .then(res => setProductos(res.data))
@@ -21,80 +30,104 @@ export default function FormularioMovimiento({ onMovimientoAgregado }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const movimiento = {
-        producto_id: productoId,
-        usuario: usuario.id,
-        tipo,
-        cantidad,
-        comentario
-      };
+    setMensaje(""); 
 
-      await api.post("movimientos/", movimiento);
+    if (!productoId) {
+      setMensaje("Por favor, selecciona un producto.");
+      return;
+    }
+    if (!usuario) {
+      setMensaje("Error: no se pudo identificar al usuario.");
+      return;
+    }
+
+    
+    const payload = {
+      producto_id: productoId,      
+      usuario: usuario.id,
+      tipo: tipo,                   
+      cantidad: Number(cantidad),
+      comentario,
+    };
+
+    try {
+      
+      await api.post("movimientos/", payload);
       setMensaje("Movimiento registrado exitosamente ✅");
 
-      // Limpiar campos
+      
       setProductoId("");
+      setTipo("entrada");
       setCantidad(1);
       setComentario("");
 
-      // Llamar recarga del historial
       if (onMovimientoAgregado) {
         onMovimientoAgregado();
       }
+      setTimeout(() => setMensaje(""), 3000);
+
     } catch (error) {
-      console.error("Error:", error.response?.data || error );
-      setMensaje("Error al registrar el movimiento ❌");
+      console.error("Respuesta completa del error:", error.response);
+      let errorMessage = "Ocurrió un error al registrar el movimiento.";
+
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (typeof errorData === 'object') {
+          const messages = Object.values(errorData).flat().join(' ');
+          if (messages) {
+            errorMessage = messages;
+          }
+        }
+      }
+      setMensaje(errorMessage + " ❌");
     }
-  };    
+  };
 
   return (
-    <div id="div-formulario-movimiento">
-      <h2>Registrar movimiento</h2>
-      <form onSubmit={handleSubmit} id="div-formulario">
-        <div id="div-producto">
+    <div className="form-container" style={{ maxWidth: '700px' }}>
+      <h2>Registrar Movimiento</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
           <label>Producto:</label>
-          <select value={productoId} onChange={e => setProductoId(e.target.value)} required>
-            <option value="">Seleccione un producto</option>
-            {productos.map(p => (
-              <option key={p.id} value={p.id}>{p.nombre}</option>
+          <select name="producto" value={productoId} onChange={(e) => setProductoId(e.target.value)} required>
+            <option value="">Selecciona un producto</option>
+            {productos.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nombre} (Stock actual: {p.stock})
+              </option>
             ))}
           </select>
         </div>
-
-        <div id="div-tipo">
-          <label>Tipo:</label>
-          <select value={tipo} onChange={e => setTipo(e.target.value)}>
+        <div className="form-group">
+          <label>Tipo de Movimiento:</label>
+          <select name="tipo_movimiento" value={tipo} onChange={(e) => setTipo(e.target.value)} required>
             <option value="entrada">Entrada</option>
             <option value="salida">Salida</option>
-            <option value="ajuste">Ajuste</option>
           </select>
         </div>
-
-        <div id="div-cantidad">
+        <div className="form-group">
           <label>Cantidad:</label>
           <input
             type="number"
+            name="cantidad"
             value={cantidad}
-            onChange={e => setCantidad(e.target.value)}
-            min="1"
+            onChange={(e) => setCantidad(e.target.value)}
             required
+            min="1"
           />
         </div>
-
-        <div id="div-comentario">
-          <label>Comentario (opcional):</label>
+        <div className="form-group">
+          <label>Comentario (Opcional):</label>
           <textarea
+            name="comentario"
             value={comentario}
-            onChange={e => setComentario(e.target.value)}
+            onChange={(e) => setComentario(e.target.value)}
           />
         </div>
-
-        <div id="div-boton">
-          <button type="submit">Registrar</button>
-        </div>
-
-        {mensaje && <div id="div-mensaje">{mensaje}</div>}
+        <button type="submit" className="form-button">Registrar Movimiento</button>
+        {mensaje && <p style={{ textAlign: 'center', marginTop: '1rem' }}>{mensaje}</p>}
       </form>
     </div>
   );

@@ -1,42 +1,38 @@
+
+:root {
+  --color-primario: #3498db;
+  --color-secundario: #2c3e50;
+  --color-fondo: #f4f7f6;
+  --color-superficie: #ffffff;
+  --color-texto: #333;
+  --color-borde: #ddd;
+  --radio-borde: 8px;
+  --sombra-caja: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+.container {
+  background: var(--color-superficie);
+  padding: 2rem;
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-caja);
+  margin-top: 2rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+h1, h2 {
+  color: var(--color-secundario);
+  margin-bottom: 1.5rem;
 }

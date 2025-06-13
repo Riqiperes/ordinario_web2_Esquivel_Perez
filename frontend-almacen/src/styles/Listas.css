@@ -1,0 +1,68 @@
+/* src/styles/Listas.css */
+.table-container {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  box-shadow: var(--sombra-caja);
+  border-radius: var(--radio-borde);
+  overflow: hidden;
+}
+
+.table-container th,
+.table-container td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.table-container thead tr {
+  background-color: var(--color-secundario);
+  color: white;
+  font-weight: 600;
+}
+
+.table-container tbody tr {
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.table-container tbody tr:nth-of-type(even) {
+  background-color: #f8f9fa;
+}
+
+.table-container tbody tr:last-of-type {
+  border-bottom: 2px solid var(--color-primario);
+}
+
+.table-container tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+
+
+.btn-editar, .btn-eliminar {
+  padding: 6px 12px;
+  margin-right: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+}
+
+.btn-editar {
+  background-color: var(--color-primario);
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #2980b9;
+}
+
+.btn-eliminar {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #c0392b;
+}

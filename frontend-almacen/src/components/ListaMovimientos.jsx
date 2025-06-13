@@ -1,45 +1,53 @@
-import { useEffect, useState } from "react";
-import api from "../api/axios";
 
-export default function ListaMovimientos() {
-  const [movimientos, setMovimientos] = useState([]);
 
-  useEffect(() => {
-    api.get("movimientos/")
-      .then(res => setMovimientos(res.data))
-      .catch(err => console.error("Error al obtener movimientos:", err));
-  }, []);
+export default function ListaMovimientos({ movimientos }) {
+    if (!movimientos || movimientos.length === 0) {
+        return <p>No hay movimientos registrados.</p>;
+    }
+    
+    
+    const formatearFecha = (fechaISO) => {
+        const opciones = {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        };
+        return new Date(fechaISO).toLocaleString('es-MX', opciones);
+    };
 
-  return (
-    <div id="div-lista-movimientos">
-      <h2>Historial de movimientos</h2>
-
-      <div id="div-tabla-movimientos">
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Producto</th>
-              <th>Tipo</th>
-              <th>Cantidad</th>
-              <th>Usuario</th>
-              <th>Comentario</th>
-            </tr>
-          </thead>
-          <tbody>
-            {movimientos.map(m => (
-              <tr key={m.id}>
-                <td>{new Date(m.fecha).toLocaleString()}</td>
-                <td>{m.producto?.nombre || "Sin nombre"}</td>
-                <td>{m.tipo}</td>
-                <td>{m.cantidad}</td>
-                <td>{m.usuario || "—"}</td>
-                <td>{m.comentario}</td>
-              </tr>
-            ))}
-          </tbody>
+    return (
+        <table className="table-container">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody>
+                {}
+                {[...movimientos].reverse().map(mov => (
+                    <tr key={mov.id}>
+                        <td>{mov.id}</td>
+                        {}
+                        <td>{mov.producto?.nombre || 'Producto no encontrado'}</td>
+                        <td style={{ 
+                            color: mov.tipo_movimiento === 'entrada' ? '#27ae60' : '#c0392b', 
+                            fontWeight: 'bold', 
+                            textTransform: 'capitalize' 
+                        }}>
+                            {mov.tipo_movimiento}
+                        </td>
+                        <td>{mov.cantidad}</td>
+                        <td>{formatearFecha(mov.fecha)}</td>
+                        <td>{mov.usuario?.username || 'Usuario no encontrado'}</td>
+                        <td>{mov.comentario || '—'}</td>
+                    </tr>
+                ))}
+            </tbody>
         </table>
-      </div>
-    </div>
-  );
+    );
 }
